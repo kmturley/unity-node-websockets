@@ -1,0 +1,21 @@
+{
+  "name": "unity-node-websockets",
+  "version": "0.0.1",
+  "description": "Unity app and Node server websockets example",
+  "main": "index.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "unity",
+    "node",
+    "websockets"
+  ],
+  "author": "kmturley",
+  "license": "ISC",
+  "dependencies": {
+    "static-server": "^2.2.1",
+    "ws": "^6.1.2"
+  }
+}
