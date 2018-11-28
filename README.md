@@ -16,49 +16,54 @@ Example project using:
 2) Install Simple Web Sockets for Unity WebGL: https://assetstore.unity.com/packages/essentials/tutorial-projects/simple-web-sockets-for-unity-webgl-38367
 3) Open the EchoTest Scene and update the EchoTest.cs file to support objects
 
-    using UnityEngine;
-    using System.Collections;
-    using System;
+```
+using UnityEngine;
+using System.Collections;
+using System;
 
-    public class Message
-    {
+public class Message
+{
 
-        public string type;
-        public string data;
-    }
+    public string type;
+    public string data;
+}
 
-    public class EchoTest : MonoBehaviour {
+public class EchoTest : MonoBehaviour {
+    
+    // Use this for initialization
+    IEnumerator Start () {
+        WebSocket w = new WebSocket(new Uri("ws://localhost:3000"));
+		yield return StartCoroutine(w.Connect());
 
-        // Use this for initialization
-        IEnumerator Start () {
-            WebSocket w = new WebSocket(new Uri("ws://localhost:3000"));
-            yield return StartCoroutine(w.Connect());
+        Message sendObject = new Message();
+        sendObject.type = "init";
+        sendObject.data = "unity";
+        w.SendString(JsonUtility.ToJson(sendObject));
 
-            Message sendObject = new Message();
-            sendObject.type = "message";
-            sendObject.data = "Sent from Unity!";
-            w.SendString(JsonUtility.ToJson(sendObject));
-
-            int i=0;
-            while (true)
-            {
-                string reply = w.RecvString();
-                if (reply != null)
+        int i=0;
+		while (true)
+		{
+			string reply = w.RecvString();
+			if (reply != null)
+			{
+                Message replyObject = JsonUtility.FromJson<Message>(reply);
+                Debug.Log("Received: " + replyObject.type + " - " + replyObject.data);
+                if (replyObject.type == "action" && replyObject.data == "move")
                 {
-                    Message replyObject = JsonUtility.FromJson<Message>(reply);
-                    Debug.Log("Received: " + replyObject.type + " - " + replyObject.data);
-
+                    Camera.current.transform.Translate(new Vector3(1.0f, 0.0f, 0.0f));
                 }
-                if (w.error != null)
-                {
-                    Debug.LogError ("Error: "+w.error);
-                    break;
-                }
-                yield return 0;
             }
-            w.Close();
-        }
-    }
+			if (w.error != null)
+			{
+				Debug.LogError ("Error: "+w.error);
+				break;
+			}
+			yield return 0;
+		}
+		w.Close();
+	}
+}
+```
 
 4) Apply a patch to support string messages: https://github.com/sta/websocket-sharp/issues/181#issuecomment-158873401
 5) Create a build at: Unity > File > Build Settings > WebGL and build to this project /src folder
