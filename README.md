@@ -29,8 +29,6 @@ public class Message
 }
 
 public class EchoTest : MonoBehaviour {
-    
-    // Use this for initialization
     IEnumerator Start () {
         WebSocket w = new WebSocket(new Uri("ws://localhost:3000"));
 		yield return StartCoroutine(w.Connect());
@@ -39,8 +37,9 @@ public class EchoTest : MonoBehaviour {
         sendObject.type = "init";
         sendObject.data = "unity";
         w.SendString(JsonUtility.ToJson(sendObject));
+        Debug.Log("Init");
 
-        int i=0;
+        int i = 0;
 		while (true)
 		{
 			string reply = w.RecvString();
@@ -52,8 +51,19 @@ public class EchoTest : MonoBehaviour {
                 {
                     Camera.current.transform.Translate(new Vector3(1.0f, 0.0f, 0.0f));
                 }
+
+                // Send screen capture back via websockets
+                yield return new WaitForEndOfFrame();
+                int width = Screen.width;
+                int height = Screen.height;
+                Texture2D tex = new Texture2D(width, height, TextureFormat.RGB24, false);
+                tex.ReadPixels(new Rect(0, 0, width, height), 0, 0);
+                tex.Apply();
+                byte[] bytes = tex.EncodeToPNG();
+                UnityEngine.Object.Destroy(tex);
+                w.Send(bytes);
             }
-			if (w.error != null)
+            if (w.error != null)
 			{
 				Debug.LogError ("Error: "+w.error);
 				break;
