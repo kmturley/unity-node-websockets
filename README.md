@@ -66,9 +66,12 @@ public class EchoTest : MonoBehaviour {
 ```
 
 4) Apply a patch to support string messages: https://github.com/sta/websocket-sharp/issues/181#issuecomment-158873401
-5) Create a build at: Unity > File > Build Settings > WebGL and build to this project /src folder
 
-## Usage
+## Usage (WebGL)
+
+Create a build at: Unity > File > Build Settings > WebGL and build to this project folder:
+
+    /src
 
 Run the websocket backend using:
 
@@ -81,6 +84,30 @@ In a second terminal window, run the Unity WebGL frontend:
 View the frontend at:
 
     http://localhost:8080/
+
+
+## Usage (Standalone)
+
+Create a build at: Unity > File > Build Settings > Standalone and build to this project folder:
+
+    /src-standalone
+
+Run the websocket backend using:
+
+    node server.js
+
+In a second terminal window, run the frontend:
+
+    node client-standalone.js
+
+In a third terminal window, run the Unity standalone app:
+
+    open src-standalone/unity.app
+
+View the frontend at:
+
+    http://localhost:8080/
+    
 
 
 ## Contact
